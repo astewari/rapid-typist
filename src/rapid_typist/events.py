@@ -16,4 +16,3 @@ class FinalEvent:
     text: str
     latency_ms: Optional[int] = None
 
-

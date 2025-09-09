@@ -103,4 +103,3 @@ class Segmenter:
                 else:
                     pre.append(pcm)
             yield seg_out, active, level
-

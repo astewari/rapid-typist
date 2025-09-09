@@ -17,4 +17,3 @@ class PasteSink(Sink):
         osa = 'tell application "System Events" to keystroke "v" using command down'
         subprocess.run(["/usr/bin/osascript", "-e", osa], check=False)
 
-

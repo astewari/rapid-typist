@@ -64,4 +64,3 @@ class AudioCapture:
             except Exception:
                 continue
 
-

@@ -16,4 +16,3 @@ class FileSink(Sink):
             f.write(text)
             f.write(self.separator)
 
-

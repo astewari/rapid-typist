@@ -62,6 +62,7 @@ class FnDoublePressListener(HotkeyListener):
         self._loop = None
         self._last_press = 0.0
         self._tap = None
+        self._ready = threading.Event()
 
     def start(self) -> None:
         try:
@@ -98,15 +99,21 @@ class FnDoublePressListener(HotkeyListener):
                 None,
             )
             if not self._tap:
+                self._ready.set()
                 return
             source = Quartz.CFMachPortCreateRunLoopSource(None, self._tap, 0)
             self._loop = Quartz.CFRunLoopGetCurrent()
             Quartz.CFRunLoopAddSource(self._loop, source, Quartz.kCFRunLoopDefaultMode)
             Quartz.CGEventTapEnable(self._tap, True)
+            self._ready.set()
             Quartz.CFRunLoopRun()
 
         self._thread = threading.Thread(target=runloop, daemon=True)
         self._thread.start()
+        # Wait briefly for tap creation
+        self._ready.wait(timeout=1.0)
+        if self._tap is None:
+            raise RuntimeError("Failed to create event tap for Fn; check Accessibility permissions")
 
     def stop(self) -> None:
         try:
@@ -145,4 +152,3 @@ def create_hotkey_listener(spec: str, on_toggle: Callable[[], None]) -> HotkeyLi
         }
         key = mapping.get(spec, Key.alt_r)
         return PynputHotkeyListener(key, on_toggle, double=False)
-

@@ -13,4 +13,3 @@ class ClipboardSink(Sink):
             p.stdin.close()
         p.wait(timeout=2)
 
-

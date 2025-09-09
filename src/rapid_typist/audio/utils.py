@@ -17,4 +17,3 @@ def rms_dbfs(pcm: np.ndarray) -> float:
     db = 20.0 * np.log10(rms + 1e-12)
     return float(db)
 
-

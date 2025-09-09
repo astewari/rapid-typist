@@ -7,4 +7,3 @@ class Sink(Protocol):
     def handle_final(self, text: str) -> None:
         ...
 
-

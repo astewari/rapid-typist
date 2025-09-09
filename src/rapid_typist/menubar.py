@@ -83,8 +83,15 @@ class MenuBarApp(rumps.App):
         try:
             self.listener = create_hotkey_listener(self.cfg.app.hotkey, self.pipeline.toggle)
             self.listener.start()
-        except Exception:
-            pass
+            print(f"[rapid-typist] hotkey listener started for '{self.cfg.app.hotkey}' (double-press if fn)")
+        except Exception as e:
+            print(f"[rapid-typist] hotkey init failed: {e}; falling back to right_option double-press")
+            try:
+                self.listener = create_hotkey_listener("right_option", self.pipeline.toggle)
+                self.listener.start()
+                self.mi_hotkey.title = "Hotkey: right_option (fallback)"
+            except Exception:
+                pass
 
         # Periodic UI updates
         self._timer = rumps.Timer(self._tick, 0.5)

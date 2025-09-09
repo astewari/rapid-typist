@@ -24,5 +24,12 @@ dependencies = [
 rapid-typist = "rapid_typist.cli:main"
 rapid-typist-menubar = "rapid_typist.menubar:main"
 
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.uv]
 dev-dependencies = ["black", "ruff", "pytest", "pytest-asyncio", "mypy"]
