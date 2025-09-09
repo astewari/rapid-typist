@@ -1,0 +1,30 @@
+[project]
+name = "rapid-typist"
+version = "0.1.0"
+description = "Local, streaming speech-to-text for macOS (Apple Silicon)"
+authors = [{ name = "Ashrut Tewari", email = "astewari@conviva.com" }]
+requires-python = ">=3.9,<3.10"
+readme = "README.md"
+
+dependencies = [
+  "click>=8.1",
+  "rich>=13.5",
+  "numpy>=1.20,<2.0",
+  "sounddevice>=0.4.6",
+  "webrtcvad>=2.0.10",
+  "pydantic>=2.3",
+  "pynput>=1.7.6",
+  "openai-whisper>=20231117",
+  "whispercpp>=0.0.17; python_version >= '3.10'",
+  "rumps>=0.4.0",
+  "pyobjc-framework-Quartz>=10.2",
+  "tomli>=2.0; python_version < '3.11'",
+  "setuptools>=65",
+]
+
+[project.scripts]
+rapid-typist = "rapid_typist.cli:main"
+rapid-typist-menubar = "rapid_typist.menubar:main"
+
+[tool.uv]
+dev-dependencies = ["black", "ruff", "pytest", "pytest-asyncio", "mypy"]
