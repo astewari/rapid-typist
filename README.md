@@ -29,5 +29,8 @@ Menu bar
 
 Examples
 - Benchmark 5 seconds: `uv run rapid-typist bench`
+- Choose a model (e.g., large-v3):
+  - Run: `uv run rapid-typist run --model large-v3`
+  - Bench: `uv run rapid-typist bench --seconds 5 --model large-v3`
 - Run without partials (finals only): `uv run rapid-typist run --no-partials`
   - Note: Project targets Python 3.11 with whispercpp.

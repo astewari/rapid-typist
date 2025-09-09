@@ -14,7 +14,6 @@ from .cli import Pipeline
 from .config import load_config, save_config
 from .tui import NoopTUI
 from .hotkey import create_hotkey_listener
-import torch
 
 
 MODEL_CHOICES = [
@@ -24,6 +23,7 @@ MODEL_CHOICES = [
     "tiny",
     "base",
     "small",
+    "large-v3",
 ]
 
 

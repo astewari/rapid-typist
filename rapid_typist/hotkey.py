@@ -73,7 +73,8 @@ class FnDoublePressListener(HotkeyListener):
             try:
                 flags = Quartz.CGEventGetFlags(event)
                 # Prefer kCGEventFlagMaskSecondaryFn if available
-                fnmask = getattr(Quartz, "kCGEventFlagMaskSecondaryFn", 0x00080000)  # fallback mask value
+                # Correct fallback mask for SecondaryFn is 0x00800000
+                fnmask = getattr(Quartz, "kCGEventFlagMaskSecondaryFn", 0x00800000)
                 pressed = bool(flags & fnmask)
                 if pressed:
                     now = time.time()
@@ -144,5 +145,4 @@ def create_hotkey_listener(spec: str, on_toggle: Callable[[], None]) -> HotkeyLi
         }
         key = mapping.get(spec, Key.alt_r)
         return PynputHotkeyListener(key, on_toggle, double=False)
-
 
