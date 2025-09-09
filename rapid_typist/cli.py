@@ -17,7 +17,6 @@ from .config import Config, load_config
 from .tui import TUI
 from .audio.capture import AudioCapture
 from .audio.vad import Segmenter
-from .engines.openai_whisper import WhisperTranscriber
 from .engines.whispercpp_backend import WhisperCppTranscriber
 from .sinks.base import Sink
 from .sinks.stdout import StdoutSink
@@ -27,7 +26,6 @@ from .sinks.file import FileSink
 from .audio.utils import rms_dbfs
 from .hotkey import create_hotkey_listener
 from collections import deque
-import torch
 
 
 SINKS = {
@@ -74,17 +72,9 @@ class Pipeline:
             preroll_ms=self.cfg.vad.preroll_ms,
             samplerate=16000,
         )
-        # Engine selection: prefer whispercpp, fallback to openai-whisper
-        engine = None
-        if self.cfg.engine.backend == "whispercpp":
-            try:
-                engine = WhisperCppTranscriber(model_name=self.cfg.engine.model, language=self.cfg.engine.language)
-                print("[rapid-typist] Engine: whisper.cpp")
-            except Exception as e:
-                print(f"[rapid-typist] whisper.cpp unavailable ({e}); falling back to openai-whisper")
-        if engine is None:
-            engine = WhisperTranscriber(model_name=self.cfg.engine.model, language=self.cfg.engine.language)
-            print("[rapid-typist] Engine: openai-whisper")
+        # Engine selection: whispercpp only (Python 3.11 target)
+        engine = WhisperCppTranscriber(model_name=self.cfg.engine.model, language=self.cfg.engine.language)
+        print("[rapid-typist] Engine: whisper.cpp")
         engine_lock = threading.Lock()
 
         sink_name = self.cfg.output.sink
@@ -286,7 +276,7 @@ def bench(seconds: int, model: Optional[str], language: Optional[str], input_dev
     audio = np.concatenate(blocks)
     audio_sec = len(audio) / sr
     click.echo(f"Captured {audio_sec:.2f}s audio. Loading model '{cfg.engine.model}'...")
-    eng = WhisperTranscriber(model_name=cfg.engine.model, language=cfg.engine.language)
+    eng = WhisperCppTranscriber(model_name=cfg.engine.model, language=cfg.engine.language)
     click.echo("Transcribing...")
     t0 = time.time()
     text = eng.transcribe(audio)
@@ -321,16 +311,13 @@ def run(sink: Optional[str], model: Optional[str], language: Optional[str], hotk
         cfg.app.input_device = input_device
 
     # Startup log
-    try:
-        mps = torch.backends.mps.is_available()
-    except Exception:
-        mps = False
     print(
-        "[rapid-typist] run: model=", cfg.engine.model,
+        "[rapid-typist] run:",
+        "engine=", cfg.engine.backend,
+        "model=", cfg.engine.model,
         "sink=", cfg.output.sink,
         "input=", cfg.app.input_device,
         "hotkey=", cfg.app.hotkey,
-        "torch.mps=", mps,
     )
 
     tui = TUI()

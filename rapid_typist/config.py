@@ -18,7 +18,7 @@ class AppConfig(BaseModel):
 
 
 class EngineConfig(BaseModel):
-    backend: Literal["openai_whisper", "whispercpp"] = Field(default="whispercpp")
+    backend: Literal["whispercpp"] = Field(default="whispercpp")
     model: str = Field(default="base.en")
     language: str = Field(default="en")
     word_timestamps: bool = Field(default=False)

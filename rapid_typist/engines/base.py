@@ -8,4 +8,3 @@ class Transcriber(Protocol):
     def transcribe(self, pcm: np.ndarray) -> str:  # returns final text
         ...
 
-

@@ -2,11 +2,11 @@ rapid-typist — Local Voice→Text for macOS (Apple Silicon)
 
 Quick start
 - Ensure Homebrew ffmpeg is installed: `brew install ffmpeg`
-- Create a Python 3.9 environment (uv/venv) and install deps: `uv pip install -e .`
+- Create a Python 3.11 environment (uv/venv) and install deps: `uv pip install -e .`
 - First run: `uv run rapid-typist run` (grants mic & accessibility on demand)
 
 Defaults
-- Backend: whisper.cpp via `whispercpp` (auto Metal/CoreML if available); falls back to openai-whisper on Python 3.9 if whispercpp wheel is unavailable
+- Backend: whisper.cpp via `whispercpp` (auto Metal/CoreML if available)
 - Sink: paste (finalized segments only)
 - Hotkey: double Fn (press Fn twice to toggle)
 - VAD: 30ms frames, aggressiveness=2, hangover=300ms, preroll=150ms
@@ -30,4 +30,4 @@ Menu bar
 Examples
 - Benchmark 5 seconds: `uv run rapid-typist bench`
 - Run without partials (finals only): `uv run rapid-typist run --no-partials`
-  - Note: Project targets Python 3.9 with openai-whisper.
+  - Note: Project targets Python 3.11 with whispercpp.

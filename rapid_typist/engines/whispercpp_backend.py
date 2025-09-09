@@ -9,27 +9,26 @@ from ..audio.utils import int16_to_float32
 class WhisperCppTranscriber(Transcriber):
     def __init__(self, model_name: str = "base.en", language: str = "en") -> None:
         try:
-            from whispercpp import Whisper  # type: ignore
+            from pywhispercpp.model import Model  # type: ignore
         except Exception as e:  # pragma: no cover
             raise ImportError(
-                "whispercpp is not available. It requires Python >=3.10 wheels or a local build with Metal/CoreML."
+                "pywhispercpp is not available. Please install on Python 3.11+."
             ) from e
-        self.Whisper = Whisper
+        self.Model = Model
         self.language = language
-        # Load default model (will download/cache to ~/.cache/whispercpp by default)
-        self.model = self.Whisper.from_pretrained(model_name)
-        # Log engine init; whisper.cpp uses Metal/CoreML if compiled that way
-        print(f"[rapid-typist] Whisper.cpp model '{model_name}' initialized (backend auto: CPU/Metal/CoreML depending on build)")
+        # Load model; pywhispercpp caches under ~/Library/Application Support/pywhispercpp/models
+        self.model = self.Model(model_name)
+        # Emit info; pywhispercpp prints Metal/CoreML usage to stdout when initializing
+        try:
+            info = self.model.system_info()
+            print(f"[rapid-typist] whisper.cpp ready — system_info: {info}")
+        except Exception:
+            print(f"[rapid-typist] whisper.cpp ready (model={model_name})")
 
     def transcribe(self, pcm: np.ndarray) -> str:
         audio = int16_to_float32(pcm)
-        # whispercpp expects float32 PCM [-1,1]
-        out = self.model.transcribe(audio)
-        # transcribe may return a generator/iterable of segments; join if needed
-        if isinstance(out, str):
-            return out.strip()
+        segs = self.model.transcribe(audio, language=self.language)
         try:
-            return " ".join(seg.text if hasattr(seg, "text") else str(seg) for seg in out).strip()
+            return " ".join(getattr(s, "text", str(s)) for s in segs).strip()
         except Exception:
             return ""
-

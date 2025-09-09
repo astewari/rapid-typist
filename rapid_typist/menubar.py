@@ -35,10 +35,6 @@ class MenuBarApp(rumps.App):
         self.pipeline = Pipeline(cfg=self.cfg, tui=NoopTUI(), device_name=self.cfg.app.input_device, enable_partials=False)
         self.listener = None
         # Startup diagnostics
-        try:
-            mps = torch.backends.mps.is_available()
-        except Exception:
-            mps = False
         print(
             "[rapid-typist] menubar:",
             "engine=", self.cfg.engine.backend,
@@ -46,7 +42,6 @@ class MenuBarApp(rumps.App):
             "sink=", self.cfg.output.sink,
             "input=", self.cfg.app.input_device,
             "hotkey=", self.cfg.app.hotkey,
-            "torch.mps=", mps,
         )
 
         # Menu items
